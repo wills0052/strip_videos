@@ -1,8 +1,8 @@
 # strip_videos
-The following contains three scripts that may be used to automate cutting segments out of videos based on timestamps in transcripts.
+This contains three scripts that may be used to automate cutting segments out of videos based on timestamps of keywords in transcripts.
 
 # Dependencies
-For python, we use ```collections, os, sys, re```. We also require ```ffmpeg```
+For python, we use ```collections, os, sys, re```. We also require ```ffmpeg```.
 # Usage
 ## Bookmarking quiz times
 The script looks for occurrences of "quiz start(s)" and "quiz end(s)" in the Zoom transcript. These can be added in manually after the fact.
