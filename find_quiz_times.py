@@ -28,8 +28,8 @@ def scrape_times(file_string):
                 
 def pair_times(file_string):
     print('The times are:')
-    
-    with open(f'quiz_times_in_{file_string}', 'w') as file:
+    filename = f'quiz_times_in_{file_string}'
+    with open(filename, 'w') as file:
         for i in range(len(time_stamps['start'])):
             check = ''
             if '*' in time_stamps['start'][i]:
@@ -47,6 +47,7 @@ def pair_times(file_string):
                   f'''end: {time_stamps['end'][i]} {check}''')
             
             file.write(string)
+    print(f'File written to {filename}')
 
 
 def run():
