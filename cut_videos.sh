@@ -13,7 +13,7 @@ fi
 if !( echo "$arg1_ext" | grep -w "vtt" ) && !( echo "arg1_ext" | grep -w "txt" );
 then
 	echo "You passed $list_of_times as the first argument."
-	echo "Ensure you have passed a transcript as the first argument."
+	echo "Ensure you have passed an (updated_)quiz_times_in_<transcript> as the first argument."
 	exit 1
 fi
 
