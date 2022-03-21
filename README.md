@@ -4,6 +4,9 @@ The following contains three scripts that may be used to automate cutting segmen
 # Dependencies
 For python, we use ```collections, os, sys, re```. We also require ```ffmpeg```
 # Usage
+## Bookmarking quiz times
+The script looks for occurrences of "quiz start(s)" and "quiz end(s)" in the Zoom transcript. These can be added in manually after the fact.
+
 ## Extract quiz start times from transcript
 Provided a Zoom transcript file, 
 ```
