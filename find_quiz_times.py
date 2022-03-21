@@ -1,8 +1,9 @@
-import sys
+import sys, os
 from collections import defaultdict
-time_stamps = defaultdict(list)
+
 
 def scrape_times(file_string):
+    time_stamps = defaultdict(list)
     if len(sys.argv) != 2:
         print('Usage: python3 find_quiz_times.py transcript.vtt')
         sys.exit(1)
@@ -25,26 +26,33 @@ def scrape_times(file_string):
                 if len(time_stamps['end']) == len(time_stamps['start']):
                     time_stamps['start'].append(start_time + '*')
                 time_stamps['end'].append(end_time)
+        
+        # Add last time-stamp if missing
+        if len(time_stamps['start']) != len(time_stamps['end']):
+            time_stamps['end'].append(end_time + '*')
+
+    return time_stamps
                 
-def pair_times(file_string):
+def pair_times(file_string, time_stamps):
     print('The times are:')
-    filename = f'quiz_times_in_{file_string}'
+    path, filename = os.path.split(file_string)
+    filename = f'quiz_times_in_{filename}'
     with open(filename, 'w') as file:
         for i in range(len(time_stamps['start'])):
             check = ''
             if '*' in time_stamps['start'][i]:
                 check = 'check_start'
                 time_stamps['start'][i] = time_stamps['start'][i][:-1]
-                print(time_stamps['start'][i])
             elif '*' in time_stamps['end'][i]:
                 check = 'check_end'
                 time_stamps['end'][i] = time_stamps['end'][i][:-1]
-                print(time_stamps['end'][i])
-            string = f'{i+1};' + time_stamps['start'][i] \
+            else:
+                check = ' '
+            string = f'{i+1:2d};' + time_stamps['start'][i] \
                            + ';' + time_stamps['end'][i] + f';{check}\n'
             
-            print(f'''{i+1}: start: {time_stamps['start'][i]} ''' + 
-                  f'''end: {time_stamps['end'][i]} {check}''')
+            print(f'''{i+1:2d}: {time_stamps['start'][i]} -- ''' + 
+                  f'''{time_stamps['end'][i]} {check}''')
             
             file.write(string)
     print(f'File written to {filename}')
@@ -52,8 +60,8 @@ def pair_times(file_string):
 
 def run():
     file_string = str(sys.argv[1])
-    scrape_times(file_string)
-    pair_times(file_string)
+    time_stamps = scrape_times(file_string)
+    pair_times(file_string, time_stamps)
     
 if __name__ == '__main__':
     run()

@@ -2,6 +2,12 @@
 list_of_times="$1"
 video="$2"
 
+if [ "$#" -ne 2 ];
+then
+	echo "Usage: ./cut_videos.sh list_of_times video"
+	exit 1
+fi
+
 while read p
 do
 	quiz_number=$(echo "$p" | awk -F';' '{print $1}')
