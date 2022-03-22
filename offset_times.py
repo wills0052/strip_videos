@@ -22,6 +22,24 @@ def check_and_adjust_times(records):
                      f'''{records['start'][0][1]:02d}:''' + 
                      f'''{records['start'][0][2]:02d}''')
 
+    # Check for start time
+    while True:
+        try:
+            times_correct = input(f'Are these times correct? (y/n) [e to exit] ')
+            if times_correct.lower() == 'e':
+                print('Exiting.')
+                sys.exit(1)
+            elif times_correct.lower() == 'y':
+                print('Times correct. Proceeding.')
+                return records
+            elif times_correct.lower() == 'n':
+                break
+            else:
+                raise ValueError
+        except ValueError:
+            print('Invalid input.')
+            
+    
     # Ask for new start times
     while True:
         try:
@@ -56,10 +74,17 @@ def check_and_adjust_times(records):
 
 def process_file():
     records = defaultdict(list)
+    head, filename = os.path.split(sys.argv[1])
+    print(sys.argv[1])
     if len(sys.argv) != 2:
-        print('Usage: python3 offset_times.py file.txt')
+        print('Usage: python3 offset_times.py transcript.vtt')
+        sys.exit(1)
+    if os.stat(filename).st_size == 0:
+        print('No times detected.')
         sys.exit(1)
     with open(str(sys.argv[1])) as file:
+
+            
         print('Current quiz times are:')
         for line in file:
             quiz_number, start_time, end_time, check = line.split(';')
@@ -69,7 +94,22 @@ def process_file():
             
     return records
      
+def check_records_equal(records1, records2):
+    
+    for i in range(len(records1['start'])):
+        for j in range(3):
+            if records1['start'][i][j] != records2['start'][i][j] or \
+                records1['end'][i][j] != records2['end'][i][j]:
+                return False
+    return True
+ 
+    
+    
 def verify_new_times(records, new_records):
+    # If records and new_records are the same, then continue
+    if check_records_equal(records, new_records):
+        return True
+    
     print('New quiz times are:')
     for i in range(len(new_records['start'])):
         print(f'''{i+1:2d}: {time_stamp_in_hms(*new_records['start'][i])} -- ''' +

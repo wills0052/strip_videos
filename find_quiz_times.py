@@ -61,6 +61,9 @@ def pair_times(file_string, time_stamps):
 def run():
     file_string = str(sys.argv[1])
     time_stamps = scrape_times(file_string)
+    if len(time_stamps['start']) == 0:
+        print('No time stamps detected. Exiting')
+        sys.exit(1)
     pair_times(file_string, time_stamps)
     
 if __name__ == '__main__':
