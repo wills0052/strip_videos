@@ -1,8 +1,9 @@
 # strip_videos
-This contains three scripts that may be used to automate cutting segments out of videos based on timestamps of keywords in transcripts.
+This contains four scripts that may be used to automate cutting segments out of videos based on timestamps of keywords in transcripts.
 
 # Dependencies
 For python, we use ```collections, os, sys, re```. We also require ```ffmpeg```.
+
 # Usage
 ## Bookmarking quiz times
 The script looks for occurrences of "quiz start(s)" and "quiz end(s)" in the Zoom transcript. These can be added in manually after the fact.
@@ -27,3 +28,10 @@ Provided either the original ```<quiz_times_in_transcriptfile>``` or ```<updated
 ./cut_videos.sh <(updated_)quiz_times_in_transcriptfile> <video>
 ```
 will cut the desired segments and output them as ```quiz_<number>_<start_time>_<end_time>_video```.
+
+## Run all three abovew in one go
+Provided a zoom ```.vtt``` transcript file and a video, 
+```
+./run.sh <transcript.vtt> <video>
+```
+will extract quiz times. It will then run the second script to ask for adjustments. Finally it will cut the segments out and output them to the current directory.
