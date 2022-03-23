@@ -1,6 +1,12 @@
 import sys, os
 from collections import defaultdict
 
+start_phrases = {'quiz start', 'start quiz', 'quiz starts', 'quiz started'}
+end_phrases = {'quiz stop', 'stop quiz', 'quiz end', 'quiz ends', 'end quiz', \
+               'quiz stopped', 'quiz ended', 'quiz stops'}
+
+def phrase_in_string(list_of_phrases, string):
+    return any(i for i in list_of_phrases if i in string)
 
 def scrape_times(file_string):
     time_stamps = defaultdict(list)
@@ -16,13 +22,13 @@ def scrape_times(file_string):
             # Should always have time_stamps['start'] and time_stamps['end']
             # the same length before adding new one
             # Put a mark if there is a problem
-            elif 'quiz start' in line.lower() or 'quiz starts' in line.lower():
+            elif phrase_in_string(start_phrases, line.lower()):
                 if len(time_stamps['start']) != len(time_stamps['end']):
                     time_stamps['end'].append(start_time + '*')
                 time_stamps['start'].append(start_time)
             
             # Time_stamps['start'] should always be one more than time_stamps['end']
-            elif 'quiz end' in line.lower() or 'quiz ends' in line.lower():
+            elif phrase_in_string(end_phrases, line.lower()):
                 if len(time_stamps['end']) == len(time_stamps['start']):
                     time_stamps['start'].append(start_time + '*')
                 time_stamps['end'].append(end_time)
