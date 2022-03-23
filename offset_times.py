@@ -14,7 +14,69 @@ def seconds_to_hms(seconds):
 def time_stamp_in_hms(hours, minutes, seconds):
     return f'{hours:02d}:{minutes:02d}:{seconds:02d}'
 
-def check_and_adjust_times(records):
+def get_durations_in_secs(records):
+    durations = []
+    for i in range(len(records['start'])):
+        start_time_in_secs = hms_to_secs(*records['start'][i])
+        end_time_in_secs = hms_to_secs(*records['end'][i])
+        durations.append(end_time_in_secs - start_time_in_secs)
+    return durations
+        
+def check_and_adjust_lengths(records, durations):
+    new_records = defaultdict(list)
+    for i in range(len(durations)):
+        duration_in_hms = seconds_to_hms(durations[i])
+        print(f'Quiz {i+1} is {duration_in_hms[0]:02d}:{duration_in_hms[1]:02d}:' + 
+                f'{duration_in_hms[2]:02d} long.')
+    while True:
+        try:
+            durations_correct = input(f'Are these durations fine? (y or Enter/n) [e to exit] ').lower()
+            if durations_correct == 'e':
+                print('Exiting.')
+                sys.exit(1)
+            elif durations_correct == 'y' or not durations_correct:
+                print('Durations correct. Proceeding.')
+                return records
+            elif durations_correct == 'n':
+                break
+            else:
+                raise ValueError
+        except ValueError:
+            print('Invalid input.')
+    # Ask for new max duration
+    while True:
+        try:
+            new_max_duration = input(f'What is the maximum duration? (hh:mm:ss) [Enter for default 00:05:00, e to exit] ').lower()
+            if new_max_duration == 'e':
+                print('Exiting.')
+                sys.exit(1)
+            elif not new_max_duration:
+                print('Selected 00:05:00.')
+                new_max_duration = hms_to_secs(0,5,0)
+                break
+            elif not re.search('^\d{2}:\d{2}:\d{2}$', new_max_duration):
+                raise ValueError
+            new_max_duration = hms_to_secs(*(int(i) \
+                                                 for i in new_max_duration.replace('\n', '').split(':')))
+            break
+        except ValueError:
+            print('Invalid input')
+
+    # Fix new times     
+    for i in range(len(records['start'])):
+        new_records['start'].append(records['start'][i])
+        start_time_in_secs = hms_to_secs(*records['start'][i])
+        end_time_in_secs = hms_to_secs(*records['end'][i])
+        new_difference_in_secs = min(end_time_in_secs - start_time_in_secs, \
+                                     new_max_duration)
+        new_records['end'].append(seconds_to_hms(start_time_in_secs + \
+                                                 new_difference_in_secs))
+        new_records['check'].append(records['check'][i])
+        
+    return new_records
+    
+
+def check_and_adjust_start_times(records):
     new_records = defaultdict(list)
     # Print start times
     start_ok = print(f'The first quiz start currently starts at ' +
@@ -25,11 +87,11 @@ def check_and_adjust_times(records):
     # Check for start time
     while True:
         try:
-            times_correct = input(f'Are these times correct? (y/n) [e to exit] ')
+            times_correct = input(f'Is this start time correct? (y or Enter/n) [e to exit] ')
             if times_correct.lower() == 'e':
                 print('Exiting.')
                 sys.exit(1)
-            elif times_correct.lower() == 'y':
+            elif times_correct.lower() == 'y' or not times_correct:
                 print('Times correct. Proceeding.')
                 return records
             elif times_correct.lower() == 'n':
@@ -63,12 +125,13 @@ def check_and_adjust_times(records):
         new_time_in_secs = max(hms_to_secs(*i) + offset, 0)
         new_time_in_hms = seconds_to_hms(new_time_in_secs)
         new_records['start'].append(new_time_in_hms)
+        new_records['check'].append(records['check'][i])
         
     for i in records['end']:
         new_time_in_secs = max(hms_to_secs(*i) + offset, 0)
         new_time_in_hms = seconds_to_hms(new_time_in_secs)
         new_records['end'].append(new_time_in_hms)
-        
+    
     return new_records
 
 
@@ -91,6 +154,7 @@ def process_file():
                 quiz_number, start_time, end_time, check = line.split(';')
                 records['start'].append(tuple(int(i) for i in start_time.split(':')))
                 records['end'].append(tuple(int(i) for i in end_time.split(':')))
+                records['check'].append(check)
                 print(f'{int(quiz_number):2d}: {start_time} -- {end_time} {check}', end='')
             except ValueError:
                 print('Invalid input file. Check it has been processed by find_quiz_times.py.')
@@ -110,10 +174,6 @@ def check_records_equal(records1, records2):
     
     
 def verify_new_times(records, new_records):
-    # If records and new_records are the same, then continue
-    if check_records_equal(records, new_records):
-        return True
-    print()
     print('New quiz times are:')
     for i in range(len(new_records['start'])):
         print(f'''{i+1:2d}: {time_stamp_in_hms(*new_records['start'][i])} -- ''' +
@@ -128,8 +188,8 @@ def verify_new_times(records, new_records):
         print('Exiting.')
         sys.exit(1)
     if confirm.lower() == 'y':
-        return True
-    return False
+        return new_records
+    return records
 
 def write_to_file(new_records):
     # head, filename = os.path.split(sys.argv[1])
@@ -137,16 +197,24 @@ def write_to_file(new_records):
     with open(filename, 'w') as file:
         for i in range(len(new_records['start'])):
             file.write(f'{i+1};' + time_stamp_in_hms(*new_records['start'][i]) + ';' + 
-                   time_stamp_in_hms(*new_records['end'][i]) + '\n')
+                   time_stamp_in_hms(*new_records['end'][i]) + ';' + new_records['check'][i])
     print(f'File written to {filename}.')    
     
 def run():
     records = process_file()
-    
-    new_records = check_and_adjust_times(records)
-
-    while not verify_new_times(records, new_records):
-        new_records = check_and_adjust_times(records)
+    duration_triggering_flag = 5*60
+    durations = get_durations_in_secs(records)
+    if any(i for i in durations if i > duration_triggering_flag):
+        print(f'Detected duration greater than {duration_triggering_flag} seconds.')
+        new_records = check_and_adjust_lengths(records, durations)
+        new_records = verify_new_times(records, new_records)
+        records = new_records
+        
+    # Allow for adjusting start times
+    new_records = check_and_adjust_start_times(records)
+    while not check_records_equal(records, new_records):
+        new_records = verify_new_times(records, new_records)
+        new_records = check_and_adjust_start_times(records)
 
     write_to_file(new_records)
     return 0

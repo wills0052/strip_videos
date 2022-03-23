@@ -6,14 +6,14 @@ For python, we use ```collections, os, sys, re```. We also require ```ffmpeg```.
 
 # Usage
 ## Bookmarking quiz times
-The script looks for occurrences of "start quiz", "quiz start(s)" and "stop quiz", "quiz stop(s/ped)", "quiz end(s/ed)" in the Zoom transcript. These can be added in manually after the fact.
+The script looks for occurrences of "quiz" and one of "start(s/ed)", "stop(s/ed)" in the Zoom transcript. These can be added in manually after the fact.
 
 ## Extract quiz start times from transcript
-Provided a Zoom transcript file, 
+Provided a Zoom transcript file in the working directory,
 ```
 python3 find_quiz_times.py <transcriptfile.vtt>
 ```
-will output a file called ```<quiz_times_in_transcriptfile.vtt>``` which contains quiz start and end times and will flag any unbalanced start/end times which can be edited in the transcript manually. This will be output to the directory of current <transcriptfile.vtt>.
+will output a file called ```<quiz_times_in_transcriptfile.vtt>``` which contains quiz start and end times and will flag any unbalanced start/end times which can be edited in the transcript manually. 
 
 ## Adjust times by a fixed time offset
 Provided a file output by ```find_quiz_times.py``` with ```.vtt``` extension, 

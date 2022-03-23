@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, re
 from collections import defaultdict
 
 start_phrases = {'start', 'starts', 'started', 'begin', 'begins'}
@@ -21,7 +21,7 @@ def scrape_times(file_string):
             # Should always have time_stamps['start'] and time_stamps['end']
             # the same length before adding new one
             # Put a mark if there is a problem
-            elif 'quiz' in lowercase_line and phrase_in_string(start_phrases, lowercase_line):
+            if 'quiz' in lowercase_line and phrase_in_string(start_phrases, lowercase_line):
                 if len(time_stamps['start']) != len(time_stamps['end']):
                     time_stamps['end'].append(start_time + '*')
                 time_stamps['start'].append(start_time)
@@ -41,7 +41,8 @@ def scrape_times(file_string):
 def pair_times(file_string, time_stamps):
     print('The times are:')
     path, filename = os.path.split(file_string)
-    filename = f'{path}/quiz_times_in_{filename}'
+    filename = f'quiz_times_in_{filename}'
+    #filename = f'{path}/quiz_times_in_{filename}'
     with open(filename, 'w') as file:
         for i in range(len(time_stamps['start'])):
             check = ''
