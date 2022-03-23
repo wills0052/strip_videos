@@ -3,6 +3,7 @@ list_of_times="$1"
 video="$2"
 video_filename="$(basename "$video")"
 arg1_ext="$(echo $list_of_times | awk -F'.' '{print $NF}')"
+video_dirname="$(dirname "$video")"
 
 if [[ "$#" -ne 2 ]];
 then
@@ -26,7 +27,7 @@ do
 
 	echo -e "Processing video $quiz_number from $start_time to $end_time\n"
 	# echo ffmpeg -y -ss "$start_time" -to "$end_time" -i "$video" -c copy quiz_"$quiz_number"_"$start_time"_"$end_time"_"$video" -nostdin
-	ffmpeg -y -ss "$start_time" -to "$end_time" -i "$video" -c copy quiz_"$quiz_number"_"$start_time"_"$end_time"_"$video_filename" -nostdin
+	ffmpeg -y -ss "$start_time" -to "$end_time" -i "$video" -c copy "$video_dirname/quiz_$quiz_number"_"$start_time"_"$end_time"_"$video_filename" -nostdin
 done < "$list_of_times"
 
 echo -e "Done.\n"

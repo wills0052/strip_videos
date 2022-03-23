@@ -36,7 +36,7 @@ def scrape_times(file_string):
 def pair_times(file_string, time_stamps):
     print('The times are:')
     path, filename = os.path.split(file_string)
-    filename = f'quiz_times_in_{filename}'
+    filename = f'{path}/quiz_times_in_{filename}'
     with open(filename, 'w') as file:
         for i in range(len(time_stamps['start'])):
             check = ''

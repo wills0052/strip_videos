@@ -74,23 +74,27 @@ def check_and_adjust_times(records):
 
 def process_file():
     records = defaultdict(list)
-    head, filename = os.path.split(sys.argv[1])
-    print(sys.argv[1])
-    if len(sys.argv) != 2:
+    # head, filename = os.path.split(sys.argv[1])
+    filename = str(sys.argv[1])
+    if len(sys.argv) != 2 or sys.argv[1][-3:] != 'vtt':
         print('Usage: python3 offset_times.py transcript.vtt')
         sys.exit(1)
     if os.stat(filename).st_size == 0:
         print('No times detected.')
         sys.exit(1)
-    with open(str(sys.argv[1])) as file:
+        
 
-            
+    with open(filename) as file:
         print('Current quiz times are:')
         for line in file:
-            quiz_number, start_time, end_time, check = line.split(';')
-            records['start'].append(tuple(int(i) for i in start_time.split(':')))
-            records['end'].append(tuple(int(i) for i in end_time.split(':')))
-            print(f'{int(quiz_number):2d}: {start_time} -- {end_time} {check}', end='')
+            try:
+                quiz_number, start_time, end_time, check = line.split(';')
+                records['start'].append(tuple(int(i) for i in start_time.split(':')))
+                records['end'].append(tuple(int(i) for i in end_time.split(':')))
+                print(f'{int(quiz_number):2d}: {start_time} -- {end_time} {check}', end='')
+            except ValueError:
+                print('Invalid input file. Check it has been processed by find_quiz_times.py.')
+                sys.exit(1)
             
     return records
      
@@ -109,7 +113,7 @@ def verify_new_times(records, new_records):
     # If records and new_records are the same, then continue
     if check_records_equal(records, new_records):
         return True
-    
+    print()
     print('New quiz times are:')
     for i in range(len(new_records['start'])):
         print(f'''{i+1:2d}: {time_stamp_in_hms(*new_records['start'][i])} -- ''' +
@@ -128,8 +132,8 @@ def verify_new_times(records, new_records):
     return False
 
 def write_to_file(new_records):
-    head, filename = os.path.split(sys.argv[1])
-    filename = f'updated_{filename}'
+    # head, filename = os.path.split(sys.argv[1])
+    filename = str(sys.argv[1])
     with open(filename, 'w') as file:
         for i in range(len(new_records['start'])):
             file.write(f'{i+1};' + time_stamp_in_hms(*new_records['start'][i]) + ';' + 

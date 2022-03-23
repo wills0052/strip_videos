@@ -3,15 +3,18 @@ transcript="$1"
 video="$2"
 arg1_ext="$(echo $transcript | awk -F'.' '{print $NF}')"
 filename="$(basename "$transcript")"
+transcript_dirname="$(dirname "$transcript")"
+video_dirname="$(dirname "$video")"
+echo $transcript_dirname
 
 cut_videos () {
 	echo -e "Cutting video.\n"
-	./cut_videos.sh "updated_quiz_times_in_$filename" "$video"
+	./cut_videos.sh "$transcript_dirname/quiz_times_in_$filename" "$video"
 }
 
 offset_times () {
 	echo -e "Checking quiz times in "$filename".\n"
-	python3 offset_times.py "quiz_times_in_$filename"
+	python3 offset_times.py "$transcript_dirname/quiz_times_in_$filename"
 }
 
 find_times () {

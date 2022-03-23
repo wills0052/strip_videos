@@ -13,21 +13,21 @@ Provided a Zoom transcript file,
 ```
 python3 find_quiz_times.py <transcriptfile>
 ```
-will output a file called ```<quiz_times_in_transcriptfile>``` which contains quiz start and end times and will flag any unbalanced start/end times which can be edited in the transcript manually.
+will output a file called ```<quiz_times_in_transcriptfile>``` which contains quiz start and end times and will flag any unbalanced start/end times which can be edited in the transcript manually. This will be output to the directory of current <transcriptfile>.
 
 ## Adjust times by a fixed time offset
-Provided a file output by ```find_quiz_times.py```, 
+Provided a file output by ```find_quiz_times.py``` with ```.vtt``` extension, 
 ```
 python3 offset_times.py <quiz_times_in_transcriptfile>
 ```
-will provide an interactive program in the terminal. It lists the start time of the first quiz and allows the user to specify the new start time in ```hh:mm:ss```. It will prompt for user confirmation and output a file ```updated_quiz_times_in_transcriptfile``` which contains the new times.
+will provide an interactive program in the terminal. It lists the start time of the first quiz and allows the user to confirm or specify the new start time in ```hh:mm:ss```. It will prompt for user confirmation and output a file ```<quiz_times_in_transcriptfile>``` which contains the new times. It will replace the file.
 
 ## Cut segments of video
-Provided either the original ```<quiz_times_in_transcriptfile>``` or ```<updated_quiz_times_in_transcriptfile>```,
+Privided with the <quiz_times_in_transcriptfile.vtt> file,
 ```
-./cut_videos.sh <(updated_)quiz_times_in_transcriptfile> <video>
+./cut_videos.sh <quiz_times_in_transcriptfile.vtt> <video>
 ```
-will cut the desired segments and output them as ```quiz_<number>_<start_time>_<end_time>_video```.
+will cut the desired segments and output them as ```quiz_<number>_<start_time>_<end_time>_video```. It will output video clips to the same directory that <video> is in.
 
 ## Run all three abovew in one go
 Provided a zoom ```.vtt``` transcript file and a video, 
