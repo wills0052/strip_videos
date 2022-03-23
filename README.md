@@ -2,11 +2,11 @@
 This contains four scripts that may be used to automate cutting segments out of videos based on timestamps of keywords in transcripts.
 
 # Dependencies
-For python, we use ```collections, os, sys, re```. We also require ```ffmpeg```.
+For python, we use ```collections, os, sys, re, itertools```. We also require ```ffmpeg```.
 
 # Usage
 ## Bookmarking quiz times
-The script looks for occurrences of "quiz" and one of "start(s/ed)", "stop(s/ed)" in the Zoom transcript. These can be added in manually after the fact.
+The script looks for occurrences of "quiz start(s/ed)", "quiz stop(s/ed)" in the Zoom transcript. These can be added in manually after the fact.
 
 ## Extract quiz start times from transcript
 Provided a Zoom transcript file in the working directory,

@@ -1,8 +1,15 @@
 import sys, os, re
 from collections import defaultdict
+from itertools import product
 
-start_phrases = {'start', 'starts', 'started', 'begin', 'begins'}
-end_phrases = {'stop', 'stops', 'stopped', 'end', 'ends', 'ended'}
+start_list = ['start', 'starts', 'started', 'begin', 'begins']
+end_list = ['stop', 'stops', 'stopped', 'end', 'ends', 'ended']
+
+start_phrases = [' '.join(i) for i in product(['quiz'], start_list)] + \
+            [' '.join(i) for i in product(start_list, ['quiz'])]
+
+end_phrases = [' '.join(i) for i in product(['quiz'], end_list)] + \
+            [' '.join(i) for i in product(end_list, ['quiz'])]
 
 def phrase_in_string(list_of_phrases, string):
     return any(i for i in list_of_phrases if i in string)
