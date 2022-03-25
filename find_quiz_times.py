@@ -1,6 +1,7 @@
 import sys, os, re
 from collections import defaultdict
 from itertools import product
+from pathlib import Path
 
 start_list = ['start', 'starts', 'started', 'begin', 'begins']
 end_list = ['stop', 'stops', 'stopped', 'end', 'ends', 'ended']
@@ -14,12 +15,10 @@ end_phrases = [' '.join(i) for i in product(['quiz'], end_list)] + \
 def phrase_in_string(list_of_phrases, string):
     return any(i for i in list_of_phrases if i in string)
 
-def scrape_times(file_string):
+def scrape_times(file_location):
     time_stamps = defaultdict(list)
-    if len(sys.argv) != 2:
-        print('Usage: python3 find_quiz_times.py transcript.vtt')
-        sys.exit(1)
-    with open(file_string) as file:
+
+    with open(file_location) as file:
         for line in file:
             if '-->' in line:
                 split_times = line.split()
@@ -45,12 +44,11 @@ def scrape_times(file_string):
 
     return time_stamps
                 
-def pair_times(file_string, time_stamps):
+def pair_times(file_location, time_stamps):
     print('The times are:')
-    path, filename = os.path.split(file_string)
-    filename = f'quiz_times_in_{filename}'
-    #filename = f'{path}/quiz_times_in_{filename}'
-    with open(filename, 'w') as file:
+    new_file_location = file_location.parent / f'quiz_times_in_{file_location.name}'
+    
+    with open(new_file_location, 'w') as file:
         for i in range(len(time_stamps['start'])):
             check = ''
             if '*' in time_stamps['start'][i]:
@@ -68,16 +66,19 @@ def pair_times(file_string, time_stamps):
                   f'''{time_stamps['end'][i]} {check}''')
             
             file.write(string)
-    print(f'File written to {filename}')
+    print(f'File written to {new_file_location}')
 
 
 def run():
-    file_string = str(sys.argv[1])
-    time_stamps = scrape_times(file_string)
+    if len(sys.argv) != 2:
+        print('Usage: python3 find_quiz_times.py transcript.vtt')
+        sys.exit(1)
+    file_location = Path(sys.argv[1])
+    time_stamps = scrape_times(file_location)
     if len(time_stamps['start']) == 0:
         print('No time stamps detected. Exiting')
         sys.exit(1)
-    pair_times(file_string, time_stamps)
+    pair_times(file_location, time_stamps)
     
 if __name__ == '__main__':
     run()

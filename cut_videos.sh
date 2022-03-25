@@ -27,7 +27,7 @@ do
 
 	echo -e "Processing video $quiz_number from $start_time to $end_time\n"
 	# echo ffmpeg -y -ss "$start_time" -to "$end_time" -i "$video" -c copy quiz_"$quiz_number"_"$start_time"_"$end_time"_"$video" -nostdin
-	ffmpeg -y -ss "$start_time" -to "$end_time" -i "$video" -c copy "$video_dirname/quiz_$quiz_number"_"$start_time"_"$end_time"_"$video_filename" -nostdin
+	ffmpeg -y -ss "$start_time" -to "$end_time" -i "$video" -c copy "$video_dirname/quiz_$quiz_number"_"$video_filename" -nostdin
 done < "$list_of_times"
 
 echo -e "Done.\n"
