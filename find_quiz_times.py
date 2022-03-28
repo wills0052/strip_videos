@@ -69,16 +69,16 @@ def pair_times(file_location, time_stamps):
     print(f'File written to {new_file_location}')
 
 
-def run():
-    if len(sys.argv) != 2:
-        print('Usage: python3 find_quiz_times.py transcript.vtt')
-        sys.exit(1)
-    file_location = Path(sys.argv[1])
-    time_stamps = scrape_times(file_location)
+def run(transcript):
+    file = Path(transcript)
+    time_stamps = scrape_times(file)
     if len(time_stamps['start']) == 0:
         print('No time stamps detected. Exiting')
         sys.exit(1)
-    pair_times(file_location, time_stamps)
+    pair_times(file, time_stamps)
     
 if __name__ == '__main__':
-    run()
+    if len(sys.argv) != 2:
+        print('Usage: python3 find_quiz_times.py transcript.vtt')
+        sys.exit(1)    
+    run(sys.argv[1])

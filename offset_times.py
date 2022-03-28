@@ -4,7 +4,6 @@ from itertools import product
 from pathlib import Path
 
 
-
 def hms_to_secs(hours, minutes, seconds):
     return hours * 60 * 60 + minutes * 60 + seconds
 
@@ -137,18 +136,11 @@ def check_and_adjust_start_times(records):
     return new_records
 
 
-def process_file():
+def process_file(file_location):
     records = defaultdict(list)
-    # head, filename = os.path.split(sys.argv[1])
-    file_location = Path(sys.argv[1])
-    if len(sys.argv) != 2 or sys.argv[1][-3:] != 'vtt':
-        print('Usage: python3 offset_times.py transcript.vtt')
-        sys.exit(1)
     if os.stat(file_location).st_size == 0:
         print('No times detected.')
         sys.exit(1)
-        
-
     with open(file_location) as file:
         print('Current quiz times are:')
         for line in file:
@@ -200,17 +192,15 @@ def verify_new_times(records, new_records, durations, new_durations):
         return new_records
     return records
 
-def write_to_file(new_records):
-    
-    filename = sys.argv[1]
+def write_to_file(new_records, filename):
     with open(filename, 'w') as file:
         for i in range(len(new_records['start'])):
             file.write(f'{i+1};' + time_stamp_in_hms(*new_records['start'][i]) + ';' + 
                    time_stamp_in_hms(*new_records['end'][i]) + ';' + new_records['check'][i])
     print(f'File written to {filename}.')    
     
-def run():
-    records = process_file()
+def run(file):
+    records = process_file(Path(file))
     duration_triggering_flag = 5*60
     duration_trigger_string = f'{secs_to_hms(duration_triggering_flag)[0]:02d}:' + \
                                 f'{secs_to_hms(duration_triggering_flag)[1]:02d}:' + \
@@ -232,9 +222,14 @@ def run():
         new_records = verify_new_times(records, new_records, durations, new_durations)
         new_records = check_and_adjust_start_times(records)
 
-    write_to_file(new_records)
+    write_to_file(new_records, file)
     return 0
 
 if __name__ == '__main__':
-    run()
+    if len(sys.argv) != 2 or sys.argv[1][-3:] != 'vtt':
+        print('Usage: python3 transcript.vtt')
+        sys.exit(1)
+
+    
+    run(sys.argv[1])
 

@@ -2,11 +2,22 @@
 This contains four scripts that may be used to automate cutting segments out of videos based on timestamps of keywords in transcripts.
 
 # Dependencies
-For python, we use ```collections, os, sys, re, itertools, and pathlib```. We also require ```ffmpeg```.
+For python, we use ```collections, os, sys, re, itertools, ffmpeg, and pathlib```. We also require ```ffmpeg``` to be installed an in the PATH environment. After the latest update there is no need for any bash.
 
 # Usage
 ## Bookmarking quiz times
-The script looks for occurrences of "quiz start(s/ed)", "quiz stop(s/ed)" in the Zoom transcript. These can be added in manually after the fact.
+The script looks for occurrences of "quiz start(s/ed)", "quiz stop(s/ed)" (subject to change) in the Zoom transcript. These can be added in manually after the fact.
+
+## Running all scripts at once
+Provided a zoom ```.vtt``` transcript file and a video, 
+```
+python3 run.py <transcript.vtt> <video>
+```
+or in Bash (may be deprecated soon)
+```
+./run.sh <transcript.vtt> <video>
+```
+will extract quiz times. It will then run the second script to ask for adjustments. Finally it will cut the segments out and output them to the current directory.
 
 ## Extract quiz start times from transcript
 Provided a Zoom transcript file,
@@ -24,14 +35,12 @@ will provide an interactive program in the terminal. It lists the start time of 
 
 ## Cut segments of video
 Privided with the <quiz_times_in_transcript.vtt> file,
+```python3 cut_videos.py <quiz_times_in_transcript.vtt> <video>
+```
+or in bash (may be deprecated soon)
 ```
 ./cut_videos.sh <quiz_times_in_transcript.vtt> <video>
 ```
 will cut the desired segments and output them as ```quiz_<number>_video```. It will output video clips to the same directory that <video> is in.
 
-## Run all three above in one go
-Provided a zoom ```.vtt``` transcript file and a video, 
-```
-./run.sh <transcript.vtt> <video>
-```
-will extract quiz times. It will then run the second script to ask for adjustments. Finally it will cut the segments out and output them to the current directory.
+
