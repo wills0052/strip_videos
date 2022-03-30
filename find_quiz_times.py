@@ -11,9 +11,16 @@ start_phrases = [' '.join(i) for i in product(['quiz'], start_list)] + \
 
 end_phrases = [' '.join(i) for i in product(['quiz'], end_list)] + \
             [' '.join(i) for i in product(end_list, ['quiz'])]
+key_words = ['explanation', 'slide', 'start']
+optional_key_words = ['poll', 'quiz', 'question']
 
 def phrase_in_string(list_of_phrases, string):
     return any(i for i in list_of_phrases if i in string)
+def all_phrases_in_string(list_of_phrases, string):
+    for i in list_of_phrases:
+        if i not in string:
+            return False
+    return True
 
 def scrape_times(file_location):
     time_stamps = defaultdict(list)
@@ -27,7 +34,10 @@ def scrape_times(file_location):
             # Should always have time_stamps['start'] and time_stamps['end']
             # the same length before adding new one
             # Put a mark if there is a problem
-            if 'quiz' in lowercase_line and phrase_in_string(start_phrases, lowercase_line):
+            if ('quiz' in lowercase_line and 
+                phrase_in_string(start_phrases, lowercase_line)) or \
+                (phrase_in_string(optional_key_words, lowercase_line) and \
+                all_phrases_in_string(key_words, lowercase_line)):
                 if len(time_stamps['start']) != len(time_stamps['end']):
                     time_stamps['end'].append(start_time + '*')
                 time_stamps['start'].append(start_time)

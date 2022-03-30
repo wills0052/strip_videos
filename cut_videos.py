@@ -41,7 +41,7 @@ def run(transcript, video):
     return 0
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3 or transcript[-3:] != 'vtt':
+    if len(sys.argv) != 3 or sys.argv[1][-3:] != 'vtt':
         print('Usage: python3 quiz_times_in_transcript.vtt video')
         sys.exit(1)
     run(sys.argv[1], sys.argv[2])

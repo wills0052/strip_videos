@@ -31,14 +31,14 @@ def check_and_adjust_lengths(records, durations):
                 f'{duration_in_hms[2]:02d} long.')
     while True:
         try:
-            durations_correct = input(f'Are these durations fine? (y or Enter/n) [e to exit] ').lower()
+            durations_correct = input(f'Are these durations fine? (n or Enter/y) [e to exit] ').lower()
             if durations_correct == 'e':
                 print('Exiting.')
                 sys.exit(1)
-            elif durations_correct == 'y' or not durations_correct:
+            elif durations_correct == 'y':
                 print('Durations correct. Proceeding.')
                 return records
-            elif durations_correct == 'n':
+            elif durations_correct == 'n'  or not durations_correct:
                 break
             else:
                 raise ValueError
@@ -184,13 +184,21 @@ def verify_new_times(records, new_records, durations, new_durations):
              f'''{time_stamp_in_hms(*records['end'][i])} '''
              f'''duration: {duration_in_hms[i][0]:02d}:{duration_in_hms[i][1]:02d}:''' + 
                 f'''{duration_in_hms[i][2]:02d}, {records['check'][i]}''', end='')
-    confirm = input('Is this right? (y,n) [e to exit] ')
-    if confirm.lower() == 'e':
-        print('Exiting.')
-        sys.exit(1)
-    if confirm.lower() == 'y':
-        return new_records
-    return records
+    while True:
+        try:
+            confirm = input('Is this right? (y,n) [e to exit] ')
+            if confirm.lower() == 'e':
+                print('Exiting.')
+                sys.exit(1)
+            elif confirm.lower() == 'y' or not confirm:
+                return new_records
+            elif confirm.lower() == 'n':
+                print('Using old records.')
+                return records
+            else:
+                raise ValueError
+        except ValueError:
+            print('Invalid input')
 
 def write_to_file(new_records, filename):
     with open(filename, 'w') as file:

@@ -6,7 +6,7 @@ For python, we use ```collections, os, sys, re, itertools, ffmpeg, and pathlib``
 
 # Usage
 ## Bookmarking quiz times
-The script looks for occurrences of "quiz start(s/ed)", "quiz stop(s/ed)" (subject to change) in the Zoom transcript. These can be added in manually after the fact.
+The script looks for either 1) occurrences of all the words ["explanation", "slide" and "start(s/ed)"], and one of the words ["poll", "quiz", "question"]; or 2) "quiz start(s/ed)" in a line to mark the start of the expalnation. It also looks for "quiz stop(s/ed)" (subject to change) in the Zoom transcript but this is optional. These can be added in manually after the fact.
 
 ## Running all scripts at once
 Provided a zoom ```.vtt``` transcript file and a video, 
