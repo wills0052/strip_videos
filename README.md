@@ -35,7 +35,8 @@ will provide an interactive program in the terminal. It lists the start time of 
 
 ## Cut segments of video
 Privided with the <quiz_times_in_transcript.vtt> file,
-```python3 cut_videos.py <quiz_times_in_transcript.vtt> <video>
+```
+python3 cut_videos.py <quiz_times_in_transcript.vtt> <video>
 ```
 or in bash (may be deprecated soon)
 ```

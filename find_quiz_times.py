@@ -34,10 +34,10 @@ def scrape_times(file_location):
             # Should always have time_stamps['start'] and time_stamps['end']
             # the same length before adding new one
             # Put a mark if there is a problem
+            #(phrase_in_string(optional_key_words, lowercase_line) and \
             if ('quiz' in lowercase_line and 
                 phrase_in_string(start_phrases, lowercase_line)) or \
-                (phrase_in_string(optional_key_words, lowercase_line) and \
-                all_phrases_in_string(key_words, lowercase_line)):
+                (all_phrases_in_string(key_words, lowercase_line)):
                 if len(time_stamps['start']) != len(time_stamps['end']):
                     time_stamps['end'].append(start_time + '*')
                 time_stamps['start'].append(start_time)
